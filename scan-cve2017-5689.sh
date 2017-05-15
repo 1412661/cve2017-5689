@@ -16,16 +16,19 @@ for ip in 123.123.{20..23}.{1..255}
 do
 	echo -n "Testing $ip..."
 	result=$(nmap -p 16992 --script http-vuln-cve2017-5689 $ip)
-	ip=$(echo $result | awk '{match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/); ip = substr($0,RSTART,RLENGTH); print ip}')
-	echo $ip >> active.list
+	ip=$(echo "$result" | awk '{match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/); ip = substr($0,RSTART,RLENGTH); print ip}')
+	echo "$ip" >> active.list
 
-	echo $result | grep 'http-vuln-cve2017-5689' > /dev/null
-	if [ "$?" == "0" ]; then
-		echo $ip >> vunl.list
-		echo -e "\tCVE-2017-5689"
-	else
-		echo -e "\tOK"
-	fi
+    #if [[ "$(echo "$result" | grep -q 'http-vuln-cve2017-5689' > /dev/null)" ]]; then
+
+    if echo "$result" | grep -q 'http-vuln-cve2017-5689' > /dev/null
+    then
+        echo "$ip" >> vuln.list
+        echo -e "\tCVE-2017-5689"
+    else
+        echo -e "\tOK"
+    fi
+
 done
 
 sed -i '/^$/d' active.list
