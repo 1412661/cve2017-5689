@@ -19,7 +19,7 @@ do
 	ip=$(echo $result | awk '{match($0,/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/); ip = substr($0,RSTART,RLENGTH); print ip}')
 	echo $ip >> active.list
 
-	echo $result | grep '16992/tcp open' > /dev/null
+	echo $result | grep 'http-vuln-cve2017-5689' > /dev/null
 	if [ "$?" == "0" ]; then
 		echo $ip >> vunl.list
 		echo -e "\tCVE-2017-5689"
